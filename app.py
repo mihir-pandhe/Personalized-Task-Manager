@@ -3,16 +3,25 @@ import pickle
 tasks = []
 
 
-def add_task(description, priority=1):
-    tasks.append({"description": description, "completed": False, "priority": priority})
+def add_task(description, priority=1, category="General"):
+    tasks.append(
+        {
+            "description": description,
+            "completed": False,
+            "priority": priority,
+            "category": category,
+        }
+    )
 
 
-def update_task(index, description=None, priority=None):
+def update_task(index, description=None, priority=None, category=None):
     if 0 <= index < len(tasks):
         if description:
             tasks[index]["description"] = description
         if priority is not None:
             tasks[index]["priority"] = priority
+        if category:
+            tasks[index]["category"] = category
         print("Task updated successfully.")
     else:
         print("Invalid task number.")
@@ -32,22 +41,24 @@ def search_tasks(keyword):
         if keyword.lower() in task["description"].lower():
             status = "Completed" if task["completed"] else "Pending"
             print(
-                f"{index + 1}. {task['description']} - Priority: {task['priority']} - {status}"
+                f"{index + 1}. {task['description']} - Priority: {task['priority']} - Category: {task['category']} - {status}"
             )
             found = True
     if not found:
         print("No tasks found.")
 
 
-def list_tasks(filter_status=None):
+def list_tasks(filter_status=None, filter_category=None):
     if not tasks:
         print("No tasks available.")
     for index, task in enumerate(tasks):
         status = "Completed" if task["completed"] else "Pending"
         if filter_status and status != filter_status:
             continue
+        if filter_category and task["category"] != filter_category:
+            continue
         print(
-            f"{index + 1}. {task['description']} - Priority: {task['priority']} - {status}"
+            f"{index + 1}. {task['description']} - Priority: {task['priority']} - Category: {task['category']} - {status}"
         )
 
 
@@ -89,7 +100,8 @@ def main():
         if choice == "1":
             description = input("Enter task description: ")
             priority = int(input("Enter task priority (1-5): "))
-            add_task(description, priority)
+            category = input("Enter task category (General, Work, Personal): ")
+            add_task(description, priority, category)
             print("Task added successfully.")
         elif choice == "2":
             index = int(input("Enter task number to update: ")) - 1
@@ -97,8 +109,9 @@ def main():
                 "Enter new task description (leave blank to keep current): "
             )
             priority = input("Enter new task priority (leave blank to keep current): ")
+            category = input("Enter new task category (leave blank to keep current): ")
             priority = int(priority) if priority else None
-            update_task(index, description or None, priority)
+            update_task(index, description or None, priority, category or None)
         elif choice == "3":
             index = int(input("Enter task number to delete: ")) - 1
             delete_task(index)
@@ -109,7 +122,13 @@ def main():
             filter_status = input(
                 "Filter by status (Completed/Pending) or leave blank: "
             )
-            list_tasks(filter_status if filter_status else None)
+            filter_category = input(
+                "Filter by category (General, Work, Personal) or leave blank: "
+            )
+            list_tasks(
+                filter_status if filter_status else None,
+                filter_category if filter_category else None,
+            )
         elif choice == "6":
             save_tasks()
         elif choice == "7":
