@@ -51,13 +51,18 @@ def list_tasks(filter_status=None):
         )
 
 
-def save_tasks(filename):
-    with open(filename, "wb") as file:
-        pickle.dump(tasks, file)
-    print("Tasks saved successfully.")
+def save_tasks():
+    filename = input("Enter filename to save tasks: ")
+    try:
+        with open(filename, "wb") as file:
+            pickle.dump(tasks, file)
+        print("Tasks saved successfully.")
+    except Exception as e:
+        print(f"Error saving tasks: {e}")
 
 
-def load_tasks(filename):
+def load_tasks():
+    filename = input("Enter filename to load tasks: ")
     global tasks
     try:
         with open(filename, "rb") as file:
@@ -106,11 +111,9 @@ def main():
             )
             list_tasks(filter_status if filter_status else None)
         elif choice == "6":
-            filename = input("Enter filename to save tasks: ")
-            save_tasks(filename)
+            save_tasks()
         elif choice == "7":
-            filename = input("Enter filename to load tasks: ")
-            load_tasks(filename)
+            load_tasks()
         elif choice == "8":
             break
         else:
